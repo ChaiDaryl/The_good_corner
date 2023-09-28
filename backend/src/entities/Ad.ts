@@ -1,0 +1,54 @@
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { Length, ValidateIf } from "class-validator";
+import { Category } from "./Category";
+import { Tag } from "./Tag";
+
+@Entity()
+export class Ad extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  id!: number;
+
+  @Column()
+  title!: string;
+
+  @Column()
+  price!: number;
+
+  @Column()
+  imgUrl!: string;
+
+  @Column({ nullable: true })
+  @Length(0, 5000)
+  @ValidateIf((object, value) => !!value)
+  description!: string;
+
+  @Column()
+  location!: string;
+
+  @Column()
+  owner!: string;
+
+  @Column()
+  dateAtCreated!: Date;
+
+  @ManyToOne(() => Category, (category) => category.ads)
+  category!: Category;
+
+  @ManyToMany(() => Tag, (tag) => tag.ads)
+  // check with SQLite extension! If you forget this following line, the
+  // pivot table won't be generated
+  @JoinTable()
+  tags!: Tag[];
+
+  @CreateDateColumn()
+  createdAt!: Date;
+}
